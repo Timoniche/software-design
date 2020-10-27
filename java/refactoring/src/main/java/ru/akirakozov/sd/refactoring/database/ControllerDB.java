@@ -1,5 +1,6 @@
 package ru.akirakozov.sd.refactoring.database;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,8 +19,12 @@ public class ControllerDB {
             " NAME           TEXT    NOT NULL, " +
             " PRICE          INT     NOT NULL)";
 
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DATABASE);
+    }
+
     public static Statement createStatement() throws SQLException {
-        return DriverManager.getConnection(DATABASE).createStatement();
+        return getConnection().createStatement();
     }
 
     public static void createDatabase() throws SQLException {
