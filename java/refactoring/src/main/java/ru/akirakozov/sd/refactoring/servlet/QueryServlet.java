@@ -35,7 +35,7 @@ public class QueryServlet extends AbstractServlet {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-
+                break;
             case "min":
                 try {
                     try (Connection c = getConnection()) {
@@ -52,6 +52,7 @@ public class QueryServlet extends AbstractServlet {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+                break;
             case "sum":
                 try {
                     try (Connection c = getConnection()) {
@@ -70,6 +71,7 @@ public class QueryServlet extends AbstractServlet {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+                break;
             case "count":
                 try {
                     try (Connection c = getConnection()) {
@@ -88,6 +90,7 @@ public class QueryServlet extends AbstractServlet {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+                break;
             default:
                 response.getWriter().println("Unknown command: " + command);
         }
