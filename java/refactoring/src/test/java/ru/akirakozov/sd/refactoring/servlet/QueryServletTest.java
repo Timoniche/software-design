@@ -51,5 +51,17 @@ public class QueryServletTest extends ServletTestWrapper{
         String result = writer.toString();
         assertTrue(result.contains("iphone1\t100"));
     }
+
+    @Test
+    @DisplayName("Count test")
+    public void testCount() throws IOException {
+        addOneProduct("iphone1", "100");
+        addOneProduct("iphone2", "300");
+        addOneProduct("iphone3", "600");
+        when(mockRequest.getParameter("command")).thenReturn("count");
+        new QueryServlet().doGet(mockRequest, mockResponse);
+        String result = writer.toString();
+        assertTrue(result.contains("3"));
+    }
 }
 
