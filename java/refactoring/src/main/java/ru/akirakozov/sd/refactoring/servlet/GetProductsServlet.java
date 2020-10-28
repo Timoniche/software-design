@@ -1,45 +1,38 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 
 import static ru.akirakozov.sd.refactoring.database.ControllerDB.getConnection;
 
 /**
  * @author akirakozov
  */
-public class GetProductsServlet extends HttpServlet {
+public class GetProductsServlet extends AbstractServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            try (Connection c = getConnection()) {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
-                response.getWriter().println("<html><body>");
-                printResultSet(response, stmt, rs);
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, SQLException {
+        try (Connection c = getConnection()) {
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
+            ArrayList<String> log = new ArrayList<>();
+            printResultSet(rs, log);
+            logHttp(log, response);
+            rs.close();
+            stmt.close();
         }
-
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 
-    static void printResultSet(HttpServletResponse response, Statement stmt, ResultSet rs) throws SQLException, IOException {
+    static void printResultSet(ResultSet rs, ArrayList<String> log)
+            throws SQLException {
         while (rs.next()) {
-            String  name = rs.getString("name");
-            int price  = rs.getInt("price");
-            response.getWriter().println(name + "\t" + price + "</br>");
+            String name = rs.getString("name");
+            int price = rs.getInt("price");
+            log.add(name + "\t" + price + "</br>");
         }
-        response.getWriter().println("</body></html>");
-
-        rs.close();
-        stmt.close();
     }
 }

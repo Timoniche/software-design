@@ -1,21 +1,21 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import static ru.akirakozov.sd.refactoring.database.ControllerDB.getConnection;
 
 /**
  * @author akirakozov
  */
-public class QueryServlet extends HttpServlet {
+public class QueryServlet extends AbstractServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String command = request.getParameter("command");
 
         if ("max".equals(command)) {
@@ -23,10 +23,10 @@ public class QueryServlet extends HttpServlet {
                 try (Connection c = getConnection()) {
                     Statement stmt = c.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("<h1>Product with max price: </h1>");
-
-                    GetProductsServlet.printResultSet(response, stmt, rs);
+                    ArrayList<String> log = new ArrayList<>();
+                    log.add("<h1>Product with max price: </h1>");
+                    GetProductsServlet.printResultSet(rs, log);
+                    logHttp(log, response);
                 }
 
             } catch (Exception e) {
@@ -37,10 +37,10 @@ public class QueryServlet extends HttpServlet {
                 try (Connection c = getConnection()) {
                     Statement stmt = c.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("<h1>Product with min price: </h1>");
-
-                    GetProductsServlet.printResultSet(response, stmt, rs);
+                    ArrayList<String> log = new ArrayList<>();
+                    log.add("<h1>Product with min price: </h1>");
+                    GetProductsServlet.printResultSet(rs, log);
+                    logHttp(log, response);
                 }
 
             } catch (Exception e) {
@@ -51,14 +51,12 @@ public class QueryServlet extends HttpServlet {
                 try (Connection c = getConnection()) {
                     Statement stmt = c.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT");
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("Summary price: ");
-
+                    ArrayList<String> log = new ArrayList<>();
+                    log.add("Summary price: ");
                     if (rs.next()) {
-                        response.getWriter().println(rs.getInt(1));
+                        log.add(rs.getString(1));
                     }
-                    response.getWriter().println("</body></html>");
-
+                    logHttp(log, response);
                     rs.close();
                     stmt.close();
                 }
@@ -71,14 +69,12 @@ public class QueryServlet extends HttpServlet {
                 try (Connection c = getConnection()) {
                     Statement stmt = c.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT");
-                    response.getWriter().println("<html><body>");
-                    response.getWriter().println("Number of products: ");
-
+                    ArrayList<String> log = new ArrayList<>();
+                    log.add("Number of products: ");
                     if (rs.next()) {
-                        response.getWriter().println(rs.getInt(1));
+                        log.add(rs.getString(1));
                     }
-                    response.getWriter().println("</body></html>");
-
+                    logHttp(log, response);
                     rs.close();
                     stmt.close();
                 }
@@ -89,9 +85,6 @@ public class QueryServlet extends HttpServlet {
         } else {
             response.getWriter().println("Unknown command: " + command);
         }
-
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 
 }
