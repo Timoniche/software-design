@@ -5,6 +5,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import ru.akirakozov.sd.refactoring.model.Product;
+import ru.akirakozov.sd.refactoring.model.ProductDAO;
 
 import static ru.akirakozov.sd.refactoring.database.ControllerDB.getConnection;
 
@@ -12,27 +17,17 @@ import static ru.akirakozov.sd.refactoring.database.ControllerDB.getConnection;
  * @author akirakozov
  */
 public class GetProductsServlet extends AbstractServlet {
+    private final ProductDAO productDAO;
+
+    public GetProductsServlet(ProductDAO productDAO) {
+        this.productDAO = productDAO;
+    }
 
     @Override
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, SQLException {
-        try (Connection c = getConnection()) {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
-            ArrayList<String> log = new ArrayList<>();
-            printResultSet(rs, log);
-            logHttp(log, response);
-            rs.close();
-            stmt.close();
-        }
-    }
-
-    static void printResultSet(ResultSet rs, ArrayList<String> log)
-            throws SQLException {
-        while (rs.next()) {
-            String name = rs.getString("name");
-            int price = rs.getInt("price");
-            log.add(name + "\t" + price + "</br>");
-        }
+            throws IOException {
+        List<Product> products = productDAO.getProducts();
+        List<String> log = products.stream().map(Product::toHttp).collect(Collectors.toList());
+        logHttp(log, response);
     }
 }

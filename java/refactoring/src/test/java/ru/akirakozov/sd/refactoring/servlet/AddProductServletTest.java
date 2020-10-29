@@ -2,6 +2,7 @@ package ru.akirakozov.sd.refactoring.servlet;
 
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import ru.akirakozov.sd.refactoring.model.ProductDAO;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ public class AddProductServletTest extends ServletTestWrapper {
     private void addOneProduct(String name, String price) throws IOException {
         when(mockRequest.getParameter("name")).thenReturn(name);
         when(mockRequest.getParameter("price")).thenReturn(price);
-        new AddProductServlet().doGet(mockRequest, mockResponse);
+        new AddProductServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
     }
 
     @Test
@@ -22,7 +23,7 @@ public class AddProductServletTest extends ServletTestWrapper {
         addOneProduct("iphone", "100");
         String result = writer.toString();
         assertTrue(result.contains("OK"));
-        new GetProductsServlet().doGet(mockRequest, mockResponse);
+        new GetProductsServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
         result = writer.toString();
         assertTrue(result.contains("iphone"));
     }
@@ -42,7 +43,7 @@ public class AddProductServletTest extends ServletTestWrapper {
         result = writer.toString();
         assertTrue(result.contains("OK"));
 
-        new GetProductsServlet().doGet(mockRequest, mockResponse);
+        new GetProductsServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
         result = writer.toString();
         assertTrue(result.contains("iphone1"));
         assertTrue(result.contains("iphone2"));

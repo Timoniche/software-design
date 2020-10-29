@@ -2,6 +2,7 @@ package ru.akirakozov.sd.refactoring.servlet;
 
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import ru.akirakozov.sd.refactoring.model.ProductDAO;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,7 +14,7 @@ public class GetProductsServletTest extends ServletTestWrapper {
     @DisplayName("testing GetProductServlet")
     public void someProductsTest() {
         runSQL(SQL_TEST_INPUT);
-        new GetProductsServlet().doGet(mockRequest, mockResponse);
+        new GetProductsServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
         String result = writer.toString();
         assertTrue(result.contains("phone\t200"));
         assertTrue(result.contains("table\t250"));

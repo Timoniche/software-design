@@ -2,6 +2,7 @@ package ru.akirakozov.sd.refactoring.servlet;
 
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import ru.akirakozov.sd.refactoring.model.ProductDAO;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ public class QueryServletTest extends ServletTestWrapper{
     private void addOneProduct(String name, String price) throws IOException {
         when(mockRequest.getParameter("name")).thenReturn(name);
         when(mockRequest.getParameter("price")).thenReturn(price);
-        new AddProductServlet().doGet(mockRequest, mockResponse);
+        new AddProductServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
     }
 
     @Test
@@ -23,7 +24,7 @@ public class QueryServletTest extends ServletTestWrapper{
         addOneProduct("iphone2", "300");
         addOneProduct("iphone3", "600");
         when(mockRequest.getParameter("command")).thenReturn("sum");
-        new QueryServlet().doGet(mockRequest, mockResponse);
+        new QueryServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
         String result = writer.toString();
         assertTrue(result.contains("1000"));
     }
@@ -35,7 +36,7 @@ public class QueryServletTest extends ServletTestWrapper{
         addOneProduct("iphone2", "300");
         addOneProduct("iphone3", "600");
         when(mockRequest.getParameter("command")).thenReturn("max");
-        new QueryServlet().doGet(mockRequest, mockResponse);
+        new QueryServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
         String result = writer.toString();
         assertTrue(result.contains("iphone3\t600"));
     }
@@ -47,7 +48,7 @@ public class QueryServletTest extends ServletTestWrapper{
         addOneProduct("iphone2", "300");
         addOneProduct("iphone3", "600");
         when(mockRequest.getParameter("command")).thenReturn("min");
-        new QueryServlet().doGet(mockRequest, mockResponse);
+        new QueryServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
         String result = writer.toString();
         assertTrue(result.contains("iphone1\t100"));
     }
@@ -59,7 +60,7 @@ public class QueryServletTest extends ServletTestWrapper{
         addOneProduct("iphone2", "300");
         addOneProduct("iphone3", "600");
         when(mockRequest.getParameter("command")).thenReturn("count");
-        new QueryServlet().doGet(mockRequest, mockResponse);
+        new QueryServlet(new ProductDAO()).doGet(mockRequest, mockResponse);
         String result = writer.toString();
         assertTrue(result.contains("3"));
     }
