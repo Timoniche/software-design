@@ -19,6 +19,13 @@ public class ControllerDB {
             " NAME           TEXT    NOT NULL, " +
             " PRICE          INT     NOT NULL)";
 
+    public static final String SELECT_SQL = "SELECT * FROM PRODUCT";
+    public static final String MAX_SQL = "SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1";
+    public static final String MIN_SQL = "SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1";
+    public static final String SUM_SQL = "SELECT SUM(PRICE) AS RES FROM PRODUCT";
+    public static final String COUNT_SQL = "SELECT COUNT(*) AS RES FROM PRODUCT";
+    public static final String INSERT_SQL = "INSERT INTO PRODUCT (NAME, PRICE) VALUES  ";
+
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DATABASE);
     }
